@@ -18,4 +18,5 @@ public interface CargoService {
 
 	boolean cargoTemFuncionarios(Long id);
 
+
 }
