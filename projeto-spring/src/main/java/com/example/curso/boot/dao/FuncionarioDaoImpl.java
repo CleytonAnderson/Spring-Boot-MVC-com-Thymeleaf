@@ -3,7 +3,6 @@ package com.example.curso.boot.dao;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 

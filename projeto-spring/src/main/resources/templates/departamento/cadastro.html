@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html layout:decorate = "~{Layout}">
-<head>
-    <meta charset="UTF-8"/>
-</head>
+<html layout:decorate="~{layout}">
+<head><meta charset="UTF-8"/></head>
 <body>
 	
 	    <section class="layout-content" layout:fragment="corpo">
@@ -24,20 +22,23 @@
 	
 	        <div class="container" id="cadastro">
 	        
-	        	<div th:replace = "fragments/alert"></div>
+	        	<div th:replace="fragments/alert"></div>
 	        	
-	            <form th:action="${departamento.id == null} ? @{/departamentos/salvar} : @{/departamentos/editar}" 
-	                  th:object=${departamento} method="POST">
-	                <div class="form-row">
-	                    <div class="form-group col-md-6">
-	                        <label for="nome">Departamento</label>
-	                        <input type="text" class="form-control" id="nome"
-	                               placeholder="Nome Departamento" autofocus="autofocus" th:field="*{nome}"/>
-	                    </div>
-	                </div>
-	                <input type="hidden" id="id" th:field="*{id}"/>
-	                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
-	            </form>
+				<form th:action="${departamento.id == null} ? @{/departamentos/salvar} : @{/departamentos/editar}" 
+				      th:object="${departamento}" method="POST">
+	        		
+	        		<div th:replace="fragments/validacao :: validacao"></div>
+				    
+				    <div class="form-row">
+				        <div class="form-group col-md-6">
+				            <label for="nome">Departamento</label>
+				            <input type="text" class="form-control" id="nome"
+				                   placeholder="Nome Departamento" autofocus="autofocus" th:field="*{nome}"/>
+				        </div>
+				    </div>
+				    <input type="hidden" id="id" th:field="*{id}"/>
+				    <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+				</form>
 	        </div>
 	    </section>
 </body>

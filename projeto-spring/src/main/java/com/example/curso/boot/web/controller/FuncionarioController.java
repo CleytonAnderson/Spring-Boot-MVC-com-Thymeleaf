@@ -1,13 +1,19 @@
 package com.example.curso.boot.web.controller;
 
 import java.util.List;
+
+import javax.validation.Valid;
+
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,15 +26,21 @@ import com.example.curso.boot.domain.Funcionario;
 import com.example.curso.boot.domain.UF;
 import com.example.curso.boot.service.CargoService;
 import com.example.curso.boot.service.FuncionarioService;
+import com.example.curso.boot.web.validator.FuncionarioValidator;
 
 @Controller
 @RequestMapping("/funcionarios")
 public class FuncionarioController {
 
 	@Autowired
-	private FuncionarioService funcionarioService;
+	private FuncionarioService funcionarioService; // popula a lista de funcionarios no formulario html
 	@Autowired
 	private CargoService cargoService;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.addValidators(new FuncionarioValidator());
+	}
 
 	@GetMapping("/cadastrar")
 	public String cadastrar(Funcionario funcionario) {
@@ -44,9 +56,14 @@ public class FuncionarioController {
 	}
 
 	@PostMapping("/salvar")
-	public String salvar(Funcionario funcionario, RedirectAttributes attr) {
+	public String salvar(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attr) {
+		
+		if (result.hasErrors()) {
+			return "/funcionario/cadastro";
+		}
+		
 		funcionarioService.salvar(funcionario);
-		attr.addFlashAttribute("success", "Funcionario inserido com sucesso");
+		attr.addFlashAttribute("success", "Funcionario inserido com sucesso.");
 		return "redirect:/funcionarios/cadastrar";
 	}
 	
@@ -57,11 +74,16 @@ public class FuncionarioController {
 	}
 	
 	@PostMapping("/editar")
-	public String editar(Funcionario funcionario, RedirectAttributes attr) {
+	public String editar(@Valid Funcionario funcionario, BindingResult result, RedirectAttributes attr) {
+		
+		if (result.hasErrors()) {
+			return "/funcionario/cadastro";
+		}
+		
 		funcionarioService.editar(funcionario);
-		attr.addFlashAttribute("success", "Funcionario editado com sucesso");
+		attr.addFlashAttribute("success", "Funcionario editado com sucesso.");
 		return "redirect:/funcionarios/cadastrar";
-	}
+	}	
 	
 	@GetMapping("/excluir/{id}")
 	public String excluir(@PathVariable("id") Long id, RedirectAttributes attr) {
@@ -92,12 +114,12 @@ public class FuncionarioController {
 	
 
 	@ModelAttribute("cargos")
-	public List<Cargo> getCargos() {
+	public List<Cargo> getCargos() {  // envia a lista de cargo para visualização nos comboboxes da pagina.
 		return cargoService.buscarTodos();
 	}
 
 	@ModelAttribute("ufs")
-	public UF[] getUfs() {  //retorna um array de Ufs do package domain
+	public UF[] getUfs() {  //retorna um array de Ufs do package domain,envia lista de ufs nos comboboxes.
 		return UF.values();
 	}
 }
